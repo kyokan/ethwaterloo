@@ -4,67 +4,18 @@ class Authenticated extends Component {
   render() {
     return (
       <div className="authenticated">
-        <div className="authenticated__header">
-          <h1>All Videos</h1>
-        </div>
-        <div className="authenticated__videos-row">
-          <div className="authenticated__video">
-            <iframe
-              width="300"
-              height="150"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              frameBorder="0"
-              allowFullScreen>
-            </iframe>
-          </div>
-          <div className="authenticated__video">
-            <iframe
-              width="300"
-              height="150"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              frameBorder="0"
-              allowFullScreen>
-            </iframe>
-          </div>
-          <div className="authenticated__video">
-            <iframe
-              width="300"
-              height="150"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              frameBorder="0"
-              allowFullScreen>
-            </iframe>
-          </div>
-        </div>
-        <div className="authenticated__videos-row">
-          <div className="authenticated__video">
-            <iframe
-              width="300"
-              height="150"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              frameBorder="0"
-              allowFullScreen>
-            </iframe>
-          </div>
-          <div className="authenticated__video">
-            <iframe
-              width="300"
-              height="150"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              frameBorder="0"
-              allowFullScreen>
-            </iframe>
-          </div>
-          <div className="authenticated__video">
-            <iframe
-              width="300"
-              height="150"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              frameBorder="0"
-              allowFullScreen>
-            </iframe>
-          </div>
-        </div>
+        <img
+          className="authenticated__video-thumbnail"
+          src="https://i.ytimg.com/vi/TgqiSBxvdws/maxresdefault.jpg"
+        />
+        <button
+          className="authenticated__button"
+          onClick={() => {
+            console.log('request video');
+          }}
+        >
+          Download
+        </button>
       </div>
     );
   }

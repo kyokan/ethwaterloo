@@ -4,9 +4,14 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const  bodyParser = require('body-parser')
-const { checkSig } = require('./app');
+const { createAuth } = require('./app');
 const PORT = process.env.PORT || 9000;
-const jsonParser = bodyParser.json()
+const jsonParser = bodyParser.json();
+const auth = createAuth({
+  onError: (error, req, res) => {
+    res.status(500).send('not ok');
+  }
+});
 
 const app = express();
 
@@ -21,7 +26,9 @@ app.use(express.static(path.resolve(__dirname, '..', 'build')));
 //   res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
 // });
 
-app.post('/authenticate', jsonParser, checkSig);
+app.post('/authenticate', jsonParser, auth, (req, res) => {
+  return res.status(200).send('ok');
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}!`);

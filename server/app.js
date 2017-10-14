@@ -6,36 +6,77 @@ const eth = new Eth(new HttpProvider('http://localhost:8545'));
 
 eth.getBalance('0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a', (err, d) => console.log(d.toString()))
 
+
+function getPublicKeyFromSignedMessage(sig, owner) {
+  try {
+    // Same data as before
+    const data = `Login Attempt to I B RickRollin'`;
+    const message = ethUtil.toBuffer(data)
+    const msgHash = ethUtil.hashPersonalMessage(message)
+
+    // Get the address of whoever signed this message
+    const signature = ethUtil.toBuffer(sig)
+    const sigParams = ethUtil.fromRpcSig(signature)
+    const publicKey = ethUtil.ecrecover(msgHash, sigParams.v, sigParams.r, sigParams.s)
+    const sender = ethUtil.publicToAddress(publicKey)
+    const addr = ethUtil.bufferToHex(sender)
+    return addr;
+  } catch (e) {
+    throw new Error('Cannot recover public key');
+  }
+}
+
 // 0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a
-async function checkSig(req, res) {
-  console.log('REQUEST', req.body);
-  var sig = req.body.sig;
-  var owner = req.owner;
-  // Same data as before
-  var data = `Login Attempt to I B RickRollin'`;
-  var message = ethUtil.toBuffer(data)
-  var msgHash = ethUtil.hashPersonalMessage(message)
-  console.log('SIG', sig, owner);
-  // Get the address of whoever signed this message
-  var signature = ethUtil.toBuffer(sig)
-  var sigParams = ethUtil.fromRpcSig(signature)
-  var publicKey = ethUtil.ecrecover(msgHash, sigParams.v, sigParams.r, sigParams.s)
-  var sender = ethUtil.publicToAddress(publicKey)
-  var addr = ethUtil.bufferToHex(sender)
-
-  console.log('PUBLIC KEY', { publicKey });
-
-  if (addr) {
+async function createJWT(publicKey) {
+  if (publicKey) {
     // If the signature matches the owner supplied, create a
     // JSON web token for the owner that expires in 24 hours.
-    var token = jwt.sign({user: addr}, 'i am another string',  { expiresIn: '1d' });
-    res.status(200).send({ success: 1, token: token })
+    try {
+      const token = jwt.sign({ user: publicKey }, 'cryptographically secure secret phrase',  { expiresIn: '1d' });
+      return token;
+    } catch (e) {
+      throw new Error('Cannot create JWT');
+    }
   } else {
     // If the signature doesn’t match, error out
-    res.status(500).send({ err: 'Invalid address.'});
+    throw new Error('Cannot create JWT with empty public key');
+  }
+}
+
+const createAuth = options => (req, res, next) => {
+  const { onError } = options || {};
+
+  try {
+    const userPublicKey = getPublicKeyFromSignedMessage(req.body.sig, req.owner);
+    const token = createJWT(userPublicKey);
+    next();
+  } catch (err) {
+    console.error(err);
+    if (onError) {
+      onError(err, req, res, next);
+      return null;
+    }
+    res.status(500).send();
+  }
+};
+
+const createPaywall = options = (req, res, next) => {
+  const { onError } = options || {};
+
+  try {
+    const userPublicKey = getPublicKeyFromSignedMessage(req.body.jwt);
+    const token = createJWT(userPublicKey);
+    next();
+  } catch (err) {
+    console.error(err);
+    if (onError) {
+      onError(err, req, res, next);
+      return null;
+    }
+    res.status(500).send();
   }
 }
 
 module.exports = {
-  checkSig,
+  createAuth,
 };
