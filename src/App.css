@@ -51,6 +51,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  /*width: 100%;*/
 }
 
 .authenticated__header {

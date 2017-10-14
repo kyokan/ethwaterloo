@@ -7,10 +7,14 @@
     "body-parser": "^1.18.2",
     "ethereumjs-util": "^5.1.2",
     "ethjs": "^0.2.8",
+    "ethjs-provider-http": "^0.1.6",
+    "ethjs-query": "^0.2.9",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
     "morgan": "^1.9.0",
     "muicss": "^0.9.27",
+    "nodemon": "^1.12.1",
+    "npm-run-all": "^4.1.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
@@ -20,9 +24,12 @@
     "react-scripts": "1.0.14"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start-server": "nodemon server",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p start-js start-server",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "proxy": "http://localhost:9000"
 }

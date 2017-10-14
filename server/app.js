@@ -1,26 +1,18 @@
-const express = require('express');
-const morgan = require('morgan');
-const path = require('path');
-var bodyParser = require('body-parser')
-
 const jwt = require('jsonwebtoken');
 const ethUtil = require('ethereumjs-util');
+const HttpProvider = require('ethjs-provider-http');
+const Eth = require('ethjs-query');
+const eth = new Eth(new HttpProvider('http://localhost:8545'));
 
-const RedisSessions = require('redis-sessions');
-const REDIS_URL='redis://127.0.0.1:6379';
+eth.getBalance('0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a', (err, d) => console.log(d.toString()))
 
-let redisClient = new RedisSessions({
-  options: {
-    url: REDIS_URL, // Configure to use env vars: 'blapi_redis_1' in production
-  },
-});
-
-function checkSig(req, res) {
+// 0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a
+async function checkSig(req, res) {
   console.log('REQUEST', req.body);
   var sig = req.body.sig;
   var owner = req.owner;
   // Same data as before
-  var data = 'i am a string';
+  var data = `Login Attempt to I B RickRollin'`;
   var message = ethUtil.toBuffer(data)
   var msgHash = ethUtil.hashPersonalMessage(message)
   console.log('SIG', sig, owner);
@@ -31,7 +23,7 @@ function checkSig(req, res) {
   var sender = ethUtil.publicToAddress(publicKey)
   var addr = ethUtil.bufferToHex(sender)
 
-  console.log('PUBLIC KEY', addr);
+  console.log('PUBLIC KEY', { publicKey });
 
   if (addr) {
     // If the signature matches the owner supplied, create a
@@ -44,21 +36,6 @@ function checkSig(req, res) {
   }
 }
 
-
-const app = express();
-app.use(bodyParser.json());
-
-// Setup logger
-// app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
-
-// Serve static assets
-app.use(express.static(path.resolve(__dirname, '..', 'build')));
-
-// Always return the main index.html, so react-router render the route in the client
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
-});
-
-app.post('/authenticate', checkSig);
-
-module.exports = app;
+module.exports = {
+  checkSig,
+};

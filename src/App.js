@@ -28,31 +28,6 @@ class App extends Component {
     };
   }
 
-  handleLogin() {
-    function toHex(s) {
-      var hex = '';
-      for(var i=0;i<s.length;i++) { hex += '' + s.charCodeAt(i).toString(16); }
-      return `0x${hex}`;
-    }
-
-    const web3 = window.web3;
-    console.log('WEB3', web3);
-    var data = toHex('Please verify');
-    web3.currentProvider
-      .sendAsync({ id: 1, method: 'personal_sign', params: [web3.eth.accounts[0], data] },
-        (err, result) => {
-          const sig = result.result;
-          console.log('SIG', sig)
-          if (!err && sig) {
-            return axios.post('/authenticate', { sig })
-              .then(({ data: { token } }) => {
-                this.setState({ token })
-              });
-          }
-        }
-      );
-  }
-
   render() {
     const { authenticated } = this.state;
 
@@ -71,16 +46,27 @@ class App extends Component {
     }
 
     return (
-      <div className="App">
-        {
-          authenticated
-            ? <Authenticated />
-            : <Unauthenticated
-                onSubscribe={() => this.setState({ authenticated: true })}
-                onLogin={() => this.handleLogin()}
-              />
-        }
-      </div>
+      <Router>
+        <div className="app">
+          <Route path="/login" component={Unauthenticated} />
+          <Route
+            exact
+            path="/"
+            render={props => (
+              localStorage.getItem('jwt')
+                ? <Authenticated {...props} />
+                : (
+                  <Redirect
+                    to={{
+                      pathname: '/login',
+                      state: { from: props.location}
+                    }}
+                  />
+                )           
+            )}
+          />
+        </div>
+      </Router>
     )
   }
 }
