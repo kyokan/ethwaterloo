@@ -2,6 +2,7 @@ import React, { Component, } from 'react';
 import './App.css';
 import Authenticated from './Authenticated';
 import Unauthenticated from './Unauthenticated';
+import Merchant from './Merchant';
 import Button from 'muicss/lib/react/button';
 import {
   BrowserRouter as Router,
@@ -51,6 +52,10 @@ class App extends Component {
           <Route path="/login" component={Unauthenticated} />
           <Route path="/subscribe" render={() => <div>Please subscribe</div>} />
           <Route
+            path="/merchant"
+            component={Merchant}
+          />
+          <Route
             exact
             path="/"
             render={props => (
@@ -63,7 +68,7 @@ class App extends Component {
                       state: { from: props.location}
                     }}
                   />
-                )           
+                )
             )}
           />
         </div>

@@ -81,3 +81,17 @@ img.authenticated__video-thumbnail {
   width: 300px;
   margin: 0 auto;
 }
+
+.merchant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.merchant-form {
+  width: 50%;
+}
+
+.merchant-form__title {
+  margin: 5rem 0 2rem 0;
+}
