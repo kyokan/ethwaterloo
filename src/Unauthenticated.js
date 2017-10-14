@@ -35,6 +35,9 @@ class Unauthenticated extends Component {
     try {
       const { result: sig } = await this.requestSignMessage();
       const { data: { token } } = await axios.post('/authenticate', { sig })
+
+      if (!token) throw new Error('No Token');
+
       localStorage.setItem('jwt', token);
       window.location = this.props.location.state.from.pathname;
     } catch (e) {

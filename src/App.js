@@ -49,6 +49,7 @@ class App extends Component {
       <Router>
         <div className="app">
           <Route path="/login" component={Unauthenticated} />
+          <Route path="/subscribe" render={() => <div>Please subscribe</div>} />
           <Route
             exact
             path="/"

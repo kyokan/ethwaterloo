@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class Authenticated extends Component {
   render() {
@@ -10,8 +11,18 @@ class Authenticated extends Component {
         />
         <button
           className="authenticated__button"
-          onClick={() => {
-            console.log('request video');
+          onClick={async () => {
+            const { data: { url } } = await axios.request({
+              url: '/download',
+              method: 'post',
+              headers: {
+                Authorization: `${localStorage.getItem('jwt')}`,
+              }
+            })
+
+            if (url) return window.open(url, '_blank');
+
+            window.location = '/subscribe';
           }}
         >
           Download

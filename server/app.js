@@ -5,7 +5,7 @@ const Eth = require('ethjs-query');
 const eth = new Eth(new HttpProvider('http://localhost:8545'));
 
 eth.getBalance('0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a', (err, d) => console.log(d.toString()))
-
+// 
 
 function getPublicKeyFromSignedMessage(sig, owner) {
   try {
@@ -27,7 +27,7 @@ function getPublicKeyFromSignedMessage(sig, owner) {
 }
 
 // 0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a
-async function createJWT(publicKey) {
+function createJWT(publicKey) {
   if (publicKey) {
     // If the signature matches the owner supplied, create a
     // JSON web token for the owner that expires in 24 hours.
@@ -49,6 +49,7 @@ const createAuth = options => (req, res, next) => {
   try {
     const userPublicKey = getPublicKeyFromSignedMessage(req.body.sig, req.owner);
     const token = createJWT(userPublicKey);
+    req.jwt = token;
     next();
   } catch (err) {
     console.error(err);
@@ -60,23 +61,39 @@ const createAuth = options => (req, res, next) => {
   }
 };
 
-const createPaywall = options = (req, res, next) => {
-  const { onError } = options || {};
+const createPaywall = options => (req, res, next) => {
+  const { onError, onInactive } = options || {};
 
   try {
-    const userPublicKey = getPublicKeyFromSignedMessage(req.body.jwt);
-    const token = createJWT(userPublicKey);
+    const authorization = req.headers.authorization;
+    const token = jwt.verify(authorization, 'cryptographically secure secret phrase');
+    const { user, iat, exp } = token;
+
+    // Query for subscription status here
+    const isSubscriptionActive = true;
+
+    if (!isSubscriptionActive) {
+      if (onInactive) {
+        return onInactive(req, res, next);
+      }
+
+      return res.status(403).send('not ok');
+    }
+
     next();
   } catch (err) {
     console.error(err);
+
     if (onError) {
       onError(err, req, res, next);
       return null;
     }
+
     res.status(500).send();
   }
 }
 
 module.exports = {
   createAuth,
+  createPaywall,
 };
