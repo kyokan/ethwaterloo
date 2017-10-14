@@ -1,10 +1,15 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  background-color: #222;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .App-header {
@@ -25,4 +30,43 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.unauthenticated__title {
+  color: white;
+}
+
+.unauthenticated__buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.unauthenticated__buttons > * {
+  margin-left: 15px;
+}
+
+.authenticated {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.authenticated__header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: white;
+  margin: 15px;
+}
+
+.authenticated__videos-row {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.authenticated__video {
+  flex: 0;
+  margin: 0 15px;
 }
