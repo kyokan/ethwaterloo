@@ -2,9 +2,10 @@ import React, { Component, } from 'react';
 import './App.css';
 import Authenticated from './Authenticated';
 import Unauthenticated from './Unauthenticated';
-import Merchant from './Merchant';
-import Consumer from './Consumer';
 import SubscribeNow from './SubscribeNow';
+import Merchant, { MERCHANT_ABI } from './Merchant';
+import Consumer, { CONSUMER_ABI } from './Consumer';
+import Lists from './Lists';
 import Button from 'muicss/lib/react/button';
 import {
   BrowserRouter as Router,
@@ -60,6 +61,14 @@ class App extends Component {
           <Route
             path="/consumer"
             component={Consumer}
+          />
+          <Route
+            path="/subscribers"
+            component={() => <Lists header="Subscribers" abi={MERCHANT_ABI} />}
+          />
+          <Route
+            path="/subscriptions"
+            component={() => <Lists header="Subscriptions" abi={CONSUMER_ABI} />}
           />
           <Route
             exact

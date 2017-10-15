@@ -5,7 +5,7 @@ import Button from 'muicss/lib/react/button';
 import EthJs from 'ethjs';
 import BigNumber from  'bignumber.js';
 
-const CONSUMER_ABI = [{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"getSubscription","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"subscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptionsLL","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requestedAmount","type":"uint256"}],"name":"handlePaymentRequest","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"unsubscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"updateSubscription","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptions","outputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"lastPayment","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
+export const CONSUMER_ABI = [{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"getSubscription","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"subscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptionsLL","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requestedAmount","type":"uint256"}],"name":"handlePaymentRequest","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"unsubscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"updateSubscription","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptions","outputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"lastPayment","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
 
 class Consumer extends Component {
   constructor(args) {
@@ -34,15 +34,15 @@ class Consumer extends Component {
             address owner;
             mapping(address => Subscription) public subscriptions;
             mapping(address => address) public subscriptionsLL;
-            
+
             struct Subscription {
                 uint amount;
                 uint interval;
                 uint lastPayment;
             }
-            
+
             function() payable { }
-            
+
             function ConsumerSubscriptions () public payable {
                 owner = msg.sender;
             }
@@ -54,7 +54,7 @@ class Consumer extends Component {
                   subscriptions[merchantAddress].lastPayment
                 );
             }
-            
+
             // Do we need current time for initially setting lastPayment?
             function subscribe (address merchantAddress, uint amount, uint interval) {
                 merchantAddress.call.value(amount)(
@@ -62,7 +62,7 @@ class Consumer extends Component {
                     amount,
                     now
                 );
-                
+
                 subscriptions[merchantAddress] = Subscription(
                     amount,
                     interval,
@@ -71,7 +71,7 @@ class Consumer extends Component {
                 subscriptionsLL[merchantAddress] = subscriptionsLL[0x0];
                 subscriptionsLL[0x0] = merchantAddress;
             }
-            
+
             function unsubscribe (address merchantAddress) {
                 address nextAddress = subscriptionsLL[0x0];
                 while (nextAddress != msg.sender) {
@@ -81,18 +81,18 @@ class Consumer extends Component {
                 delete subscriptions[msg.sender];
                 delete subscriptionsLL[msg.sender];
             }
-            
+
             function updateSubscription (address merchantAddress, uint amount, uint interval) {
                 subscriptions[merchantAddress].amount = amount;
                 subscriptions[merchantAddress].interval = interval;
             }
-            
+
             function handlePaymentRequest (uint requestedAmount) {
                 Subscription requestedSub = subscriptions[msg.sender];
                 bool timeToPay = now >= requestedSub.lastPayment + requestedSub.interval;
                 bool requestAmountMatch = requestedAmount == requestedSub.amount;
                 // Do we need to estimate gas or have an estimate passed and then prevent call if insufficient
-                
+
                 if (requestedSub.lastPayment != 0 && timeToPay && requestAmountMatch) {
                   msg.sender.call.value(requestedSub.amount)(
                     bytes4(sha3 ("onPayment(uint256,uint256)") ),
