@@ -5,6 +5,8 @@ import Button from 'muicss/lib/react/button';
 import EthJs from 'ethjs';
 import BigNumber from  'bignumber.js';
 
+const CONSUMER_ABI = [{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"getSubscription","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"subscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptionsLL","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requestedAmount","type":"uint256"}],"name":"handlePaymentRequest","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"unsubscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"updateSubscription","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptions","outputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"lastPayment","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
+
 class Consumer extends Component {
   constructor(args) {
     super(args);
@@ -82,7 +84,7 @@ class Consumer extends Component {
             function handlePaymentRequest (uint requestedAmount) {
                 Subscription requestedSub = subscriptions[msg.sender];
                 bool timeToPay = now >= requestedSub.lastPayment + requestedSub.interval;
-                bool requestAmountMatch = requestedAmount == requestedSub.amount
+                bool requestAmountMatch = requestedAmount == requestedSub.amount;
                 // Do we need to estimate gas or have an estimate passed and then prevent call if insufficient
                 
                 if (requestedSub.lastPayment != 0 && timeToPay && requestAmountMatch) {

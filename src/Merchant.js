@@ -3,6 +3,9 @@ import Form from 'muicss/lib/react/form';
 import Input from 'muicss/lib/react/input';
 import Button from 'muicss/lib/react/button';
 import EthJs from 'ethjs';
+import BigNumber from  'bignumber.js';
+
+const MERCHANT_ABI = [{"constant":true,"inputs":[{"name":"consumerAddress","type":"address"}],"name":"getDetailsAt","outputs":[{"name":"timestamp","type":"uint256"},{"name":"amount","type":"uint256"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"consumerAddress","type":"address"},{"name":"paymentAmount","type":"uint256"}],"name":"requestPayment","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"paymentAmount","type":"uint256"},{"name":"paymentTimestamp","type":"uint256"}],"name":"onPayment","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"name","type":"string"}],"name":"update","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"subscriptionName","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"}];
 
 class Merchant extends Component {
   constructor(args) {
@@ -24,14 +27,18 @@ class Merchant extends Component {
       eth = new EthJs(window.web3.currentProvider);
     }
 
+
+    // console.log({ subscriptionAmountBN })
     (async () => {
       console.log('ASYNCED');
+      const WEI_CONSTANT = new BigNumber('1000000000000000000')
+      const subscriptionAmountBN = new BigNumber(amount).times(WEI_CONSTANT).toString()
       const contract = `
         pragma solidity ^0.4.0;
         contract MerchantContract {
           address public owner = msg.sender;
           string public subscriptionName = "${name}";
-          uint subscriptionAmount = ${amount};
+          uint subscriptionAmount = ${subscriptionAmountBN};
           uint subscriptionInterval = ${interval};
           mapping (address => Subscriber) subscribers;
           enum Statuses { SUBSCRIBED, UNSUBSCRIBED }
@@ -85,7 +92,7 @@ class Merchant extends Component {
               return false;
             }
 
-            Payment storage lastPayment = subscribers[consumerAddress].lastPayment;
+            Payment storage lastPayment = subscribers[msg.sender].lastPayment;
             lastPayment.amount = paymentAmount;
             lastPayment.timestamp = paymentTimestamp;
             return true;
@@ -102,7 +109,6 @@ class Merchant extends Component {
           }
         }
         `
-
         window.BrowserSolc.loadVersion("soljson-v0.4.6+commit.2dabbdf0.js", async compiler => {
           const optimize = 1;
           const result = compiler.compile(contract, optimize);
@@ -168,12 +174,12 @@ class Merchant extends Component {
             required
           />
           <Input
-            type="number"
+            type="text"
             label="Subscription Cost"
             floatingLabel={true}
             onChange={e => this.setState({ amount: +e.target.value })}
             defaultValue=""
-            required
+            // required
           />
           <Input
             type="number"
@@ -186,7 +192,10 @@ class Merchant extends Component {
           <Button
             variant="raised"
             color="primary"
-            onClick={() => this.generateContract()}
+            onClick={e => {
+              e.stopPropagation();
+              this.generateContract();
+            }}
             disabled={isDisabled}
           >
             Submit
