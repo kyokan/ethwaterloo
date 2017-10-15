@@ -8,13 +8,23 @@ const PK_MAP = {
 
 let eth;
 
-if (typeof window.web3 !== 'undefined') {
-  eth = new EthJs(window.web3.currentProvider);
-}
-
 const CONSUMER_ABI = [{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"getSubscription","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"subscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptionsLL","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requestedAmount","type":"uint256"}],"name":"handlePaymentRequest","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"unsubscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"updateSubscription","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptions","outputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"lastPayment","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
 
 class SubscribeNow extends Component {
+
+  checkWeb3() {
+    if (typeof window.web3 !== 'undefined') {
+      eth = new EthJs(window.web3.currentProvider);
+      this.setState({ token: null })
+    } else {
+      setTimeout(() => this.checkWeb3(), 200);
+    }
+  }
+
+  componentWillMount() {
+    this.checkWeb3();
+  }
+
   render() {
     return (
       <div className="subscribe-now">
@@ -65,7 +75,7 @@ class SubscribeNow extends Component {
             const contract = eth.contract(CONSUMER_ABI).at(contractKey);
             console.log({ contract, contractKey })
             contract.subscribe(
-              '0xB358f5Ce294C58fA556C7570c0923eC17861D005',
+              '0xa120c2Df2E0c14659803BECC5Dc3d28AB58d1C1b',
               1000000000000000,
               2592000,
               {

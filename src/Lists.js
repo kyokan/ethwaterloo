@@ -7,10 +7,6 @@ import EthJs from 'ethjs';
 
 let eth;
 
-if (typeof window.web3 !== 'undefined') {
-  eth = new EthJs(window.web3.currentProvider);
-}
-
 class Lists extends Component {
   constructor(args) {
     super(args);
@@ -20,6 +16,19 @@ class Lists extends Component {
       list: [],
       submitted: false
     };
+  }
+
+  checkWeb3() {
+    if (typeof window.web3 !== 'undefined') {
+      eth = new EthJs(window.web3.currentProvider);
+      this.setState({ token: null })
+    } else {
+      setTimeout(() => this.checkWeb3(), 200);
+    }
+  }
+
+  componentWillMount() {
+    this.checkWeb3();
   }
 
   async crawl(address = '0x0000000000000000000000000000000000000000', list = []) {

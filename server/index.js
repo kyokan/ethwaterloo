@@ -15,7 +15,7 @@ const auth = createAuth({
 });
 
 const paywall = createPaywall({
-  subscriptionKey: '0xB358f5Ce294C58fA556C7570c0923eC17861D005',
+  subscriptionKey: '0xa120c2Df2E0c14659803BECC5Dc3d28AB58d1C1b',
   onInactive: (req, res, next) => {
     console.log('redirecting');
     res.redirect('/subscribe');
