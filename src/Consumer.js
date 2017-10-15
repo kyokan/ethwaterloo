@@ -39,23 +39,29 @@ class Consumer extends Component {
                 uint amount;
                 uint interval;
                 uint lastPayment;
-            } 
+            }
             
             function() payable { }
             
             function ConsumerSubscriptions () public payable {
                 owner = msg.sender;
-                subscriptionsLL[0x0] = 0x0;
             }
 
-            function getSubscription (address merchantAddress) returns (uint, uint, uint) {
-                Subscription subToGet = subscriptions[merchantAddress];
-                return (subToGet.amount, subToGet.interval, subToGet.lastPayment);
+            function getSubscription (address merchantAddress) constant returns (uint, uint, uint) {
+                return (
+                  subscriptions[merchantAddress].amount,
+                  subscriptions[merchantAddress].interval,
+                  subscriptions[merchantAddress].lastPayment
+                );
             }
             
             // Do we need current time for initially setting lastPayment?
             function subscribe (address merchantAddress, uint amount, uint interval) {
-                merchantAddress.transfer(amount);
+                merchantAddress.call.value(amount)(
+                    bytes4(sha3 ("onPayment(uint256,uint256)") ),
+                    amount,
+                    now
+                );
                 
                 subscriptions[merchantAddress] = Subscription(
                     amount,
@@ -72,7 +78,7 @@ class Consumer extends Component {
                     nextAddress = subscriptionsLL[nextAddress];
                 }
                 nextAddress = subscriptionsLL[msg.sender];
-                delete subscriptionsLL[msg.sender];
+                delete subscriptions[msg.sender];
                 delete subscriptionsLL[msg.sender];
             }
             

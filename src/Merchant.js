@@ -41,6 +41,7 @@ class Merchant extends Component {
           uint subscriptionAmount = ${subscriptionAmountBN};
           uint subscriptionInterval = ${interval};
           mapping (address => Subscriber) subscribers;
+          mapping (address => address) subscribersLL;
           enum Statuses { SUBSCRIBED, UNSUBSCRIBED }
 
           struct Payment {
@@ -87,7 +88,11 @@ class Merchant extends Component {
             );
           }
 
-          function onPayment(uint paymentAmount, uint paymentTimestamp) returns (bool success) {
+          function requestSubscription(address consumerAddress, uint paymentAmount, uint interval) {
+
+          }
+
+          function onPayment(uint paymentAmount, uint paymentTimestamp) returns (bool success) payable {
             if (!verify(paymentAmount)) {
               return false;
             }
@@ -95,6 +100,10 @@ class Merchant extends Component {
             Payment storage lastPayment = subscribers[msg.sender].lastPayment;
             lastPayment.amount = paymentAmount;
             lastPayment.timestamp = paymentTimestamp;
+
+            subscribers[merchantAddress] = subscribers[0x0];
+            subscribers[0x0] = merchantAddress;
+
             return true;
           }
 
