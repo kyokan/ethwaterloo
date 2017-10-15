@@ -5,9 +5,11 @@ class Authenticated extends Component {
   render() {
     return (
       <div className="authenticated">
-        <img
+        <div
+          className="authenticated__headline"
+        />
+        <div
           className="authenticated__video-thumbnail"
-          src="https://i.ytimg.com/vi/TgqiSBxvdws/maxresdefault.jpg"
         />
         <button
           className="authenticated__button"
@@ -25,8 +27,9 @@ class Authenticated extends Component {
             window.location = '/subscribe';
           }}
         >
-          Download
+          Play
         </button>
+        <div className="authenticated__footer-image" />
       </div>
     );
   }
