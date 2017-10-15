@@ -74,17 +74,20 @@ class Merchant extends Component {
 
           function requestPayment(address consumerAddress, uint paymentAmount) returns (bool success) {
             // consumerAddress.requestPayment(paymentAmount)
-            // return true
+            consumerAddress.call(
+                bytes4(sha3 ("handlePaymentRequest(uint256)") ),
+                paymentAmount
+            );
           }
 
-          function onPayment(address consumerAddress, uint paymentAmount) returns (bool success) {
+          function onPayment(uint paymentAmount, uint paymentTimestamp) returns (bool success) {
             if (!verify(paymentAmount)) {
               return false;
             }
 
             Payment storage lastPayment = subscribers[consumerAddress].lastPayment;
             lastPayment.amount = paymentAmount;
-            lastPayment.timestamp = block.timestamp;
+            lastPayment.timestamp = paymentTimestamp;
             return true;
           }
 

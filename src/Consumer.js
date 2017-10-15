@@ -79,12 +79,13 @@ class Consumer extends Component {
                 subscriptions[merchantAddress].interval = interval;
             }
             
-            function handlePaymentRequest () {
+            function handlePaymentRequest (uint requestedAmount) {
                 Subscription requestedSub = subscriptions[msg.sender];
                 bool timeToPay = now >= requestedSub.lastPayment + requestedSub.interval;
+                bool requestAmountMatch = requestedAmount == requestedSub.amount
                 // Do we need to estimate gas or have an estimate passed and then prevent call if insufficient
                 
-                if (requestedSub.lastPayment != 0 && timeToPay) {
+                if (requestedSub.lastPayment != 0 && timeToPay && requestAmountMatch) {
                     msg.sender.call(
                         bytes4(sha3 ("onPayment(uint256,uint256)") ),
                         requestedSub.amount,
