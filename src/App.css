@@ -44,6 +44,18 @@
 
 .unauthenticated__buttons > * {
   margin-left: 15px;
+  margin: 48px;
+  border-radius: 50%;
+  height: 70px;
+  width: 150px;
+  background: blue;
+  border: 2px solid #f9ff00;
+}
+
+.unauthenticated {
+  height: 100vh;
+  width: 100vw;
+  background-image: url(data:image/gif;base64,R0lGODlhMAHqAMQAAAAAAAgAUiEhISkAezExYzkApTk5OUJ7rUoAA…1xY4vzRXqxBIOwJlYYWEDa14mmxif+R1bRKG4H2Fs3koDFIoDd9ot584o7M410IooBAQAAOw==);
 }
 
 .authenticated {

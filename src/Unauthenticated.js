@@ -47,10 +47,9 @@ class Unauthenticated extends Component {
 
   render() {
     const { onSubscribe } = this.props;
-    console.log(this.props.location.state.from.pathname)
+
     return (
       <div className="unauthenticated">
-        <h1 className="unauthenticated__title">Please subscribe to view content</h1>
         <div className="unauthenticated__buttons">
           <Button
             color="primary"
