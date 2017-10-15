@@ -9,6 +9,8 @@ const PK_MAP = {
   '0X136A367ACC86CD02D50768B10527BD7117694C2E': '0xd0082cEd53C102D56454419603F5B974dDeF316E'
 };
 
+const ABI = [{"constant":true,"inputs":[{"name":"consumerAddress","type":"address"}],"name":"getDetailsAt","outputs":[{"name":"timestamp","type":"uint256"},{"name":"amount","type":"uint256"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscribersLL","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"consumerAddress","type":"address"},{"name":"paymentAmount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"requestSubscription","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"consumerAddress","type":"address"},{"name":"paymentAmount","type":"uint256"}],"name":"requestPayment","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"paymentAmount","type":"uint256"},{"name":"paymentTimestamp","type":"uint256"}],"name":"onPayment","outputs":[{"name":"success","type":"bool"}],"payable":true,"type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"name","type":"string"}],"name":"update","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"subscriptionName","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"payable":true,"type":"fallback"}];
+
 eth.getBalance('0x6DcfE11eD24897FbEb64423A39FD421e278DD55E', (err, d) => console.log(d.toString()))
 // 
 
@@ -67,16 +69,15 @@ const createAuth = options => (req, res, next) => {
 };
 
 const createPaywall = options => async (req, res, next) => {
-  const { onError, onInactive, subscriptionKey, abi } = options || {};
+  const { onError, onInactive, subscriptionKey } = options || {};
 
   try {
     const authorization = req.headers.authorization;
     const token = jwt.verify(authorization, 'cryptographically secure secret phrase');
     const { user, iat, exp } = token;
 
-    const contract = eth.contract(abi).at(subscriptionKey)
+    const contract = eth.contract(ABI).at(subscriptionKey)
 
-    console.log({ contract, user })
     const { status } = await contract.getDetailsAt(PK_MAP[user.toUpperCase()] || '0x0000000000000000000000000000000000000000')
     // Query for subscription status here
     const isSubscriptionActive = status.toString() == 0;
