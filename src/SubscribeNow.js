@@ -1,4 +1,17 @@
 import React, { Component } from 'react';
+import EthJs from 'ethjs';
+
+const PK_MAP = {
+  '0X6DCFE11ED24897FBEB64423A39FD421E278DD55E': '0xbf09be7DD30A7bb833300B4A9fAC4E461Bf74Bb5'
+};
+
+let eth;
+
+if (typeof window.web3 !== 'undefined') {
+  eth = new EthJs(window.web3.currentProvider);
+}
+
+const CONSUMER_ABI = [{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"getSubscription","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"subscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptionsLL","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requestedAmount","type":"uint256"}],"name":"handlePaymentRequest","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"}],"name":"unsubscribe","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"merchantAddress","type":"address"},{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"updateSubscription","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscriptions","outputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"lastPayment","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
 
 class SubscribeNow extends Component {
   render() {
@@ -43,7 +56,24 @@ class SubscribeNow extends Component {
             </div>
           </div>
         </div>
-        <button className="subscribe-now__button">
+        <button
+          className="subscribe-now__button"
+          onClick={async () => {
+            const accounts = await eth.accounts();
+            const contractKey = PK_MAP[accounts[0].toUpperCase()];
+            const contract = eth.contract(CONSUMER_ABI).at(contractKey);
+            console.log({ contract, contractKey })
+            contract.subscribe(
+              '0xe625fcf30fa1c2272c3ac3b5e0dad442c0af78fa',
+              1000000000000000,
+              2592000,
+              {
+                from: accounts[0],
+                amount: '0x0'
+              }
+            );
+          }}
+        >
           Subscribe Now!
         </button>
       </div>
