@@ -45,7 +45,7 @@ class Merchant extends Component {
             Payment lastPayment;
           }
 
-          function getDetailsAt(address consumerAddress) returns (uint timestamp, uint amount, Statuses status) {
+          function getDetailsAt(address consumerAddress) constant returns (uint timestamp, uint amount, Statuses status) {
             Payment storage lastPayment = subscribers[consumerAddress].lastPayment;
             timestamp = lastPayment.timestamp;
             amount = lastPayment.amount;
@@ -54,6 +54,8 @@ class Merchant extends Component {
             } else {
               status = Statuses.SUBSCRIBED;
             }
+
+            return timestamp, amount, status;
           }
 
           function update(uint amount, uint interval, string name) {
@@ -92,6 +94,8 @@ class Merchant extends Component {
             } else {
               verified = true;
             }
+
+            return verified;
           }
         }
         `
