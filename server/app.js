@@ -4,7 +4,7 @@ const HttpProvider = require('ethjs-provider-http');
 const Eth = require('ethjs-query');
 const eth = new Eth(new HttpProvider('http://localhost:8545'));
 
-eth.getBalance('0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a', (err, d) => console.log(d.toString()))
+// eth.getBalance('0xb54a75d89e50d0dd8b39b55daef2de4f4885c03a', (err, d) => console.log(d.toString()))
 // 
 
 function getPublicKeyFromSignedMessage(sig, owner) {
