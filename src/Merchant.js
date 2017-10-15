@@ -92,7 +92,7 @@ class Merchant extends Component {
 
           }
 
-          function onPayment(uint paymentAmount, uint paymentTimestamp) returns (bool success) payable {
+          function onPayment(uint paymentAmount, uint paymentTimestamp) payable returns (bool success) {
             if (!verify(paymentAmount)) {
               return false;
             }
@@ -101,8 +101,8 @@ class Merchant extends Component {
             lastPayment.amount = paymentAmount;
             lastPayment.timestamp = paymentTimestamp;
 
-            subscribers[merchantAddress] = subscribers[0x0];
-            subscribers[0x0] = merchantAddress;
+            subscribersLL[msg.sender] = subscribersLL[0x0];
+            subscribersLL[0x0] = msg.sender;
 
             return true;
           }

@@ -94,11 +94,11 @@ class Consumer extends Component {
                 // Do we need to estimate gas or have an estimate passed and then prevent call if insufficient
                 
                 if (requestedSub.lastPayment != 0 && timeToPay && requestAmountMatch) {
-                    msg.sender.call(
-                        bytes4(sha3 ("onPayment(uint256,uint256)") ),
-                        requestedSub.amount,
-                        now
-                    );
+                  msg.sender.call.value(requestedSub.amount)(
+                    bytes4(sha3 ("onPayment(uint256,uint256)") ),
+                    requestedSub.amount,
+                    now
+                  );
                 }
             }
         }
