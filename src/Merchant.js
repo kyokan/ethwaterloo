@@ -55,7 +55,7 @@ class Merchant extends Component {
               status = Statuses.SUBSCRIBED;
             }
 
-            return timestamp, amount, status;
+            return (timestamp, amount, status);
           }
 
           function update(uint amount, uint interval, string name) {
