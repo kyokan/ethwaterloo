@@ -3,6 +3,7 @@ import Form from 'muicss/lib/react/form';
 import Input from 'muicss/lib/react/input';
 import Button from 'muicss/lib/react/button';
 import EthJs from 'ethjs';
+import BigNumber from  'bignumber.js';
 
 class Consumer extends Component {
   constructor(args) {
@@ -103,12 +104,15 @@ class Consumer extends Component {
           const output = eth.contract(abi);
           console.log(JSON.stringify(abi))
           const account = await eth.accounts()
-          console.log(`initialDeposit`, initialDeposit);
+
+          const WEI_CONSTANT = new BigNumber('1000000000000000000')
+          const initialDepositToBigNumber = new BigNumber(initialDeposit).times(WEI_CONSTANT)
+
           const data = {
             data: '0x' + bytecode,
             from: account[0],
             gas: 0,
-            amount: '0x' + Number(initialDeposit).toString(16),
+            value: '0x' + initialDepositToBigNumber.toString(16),
           };
 
           const gas = await eth.estimateGas(data)

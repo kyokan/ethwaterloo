@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.16.2",
+    "bignumber.js": "^4.1.0",
     "body-parser": "^1.18.2",
     "ethereumjs-util": "^5.1.2",
     "ethjs": "^0.2.8",
