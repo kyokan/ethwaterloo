@@ -25,7 +25,7 @@ class Consumer extends Component {
     (async () => {
       console.log('ASYNCED');
       const contract = `
-        pragma solidity ^0.4.0;
+        pragma solidity ^0.4.17;
 
         contract ConsumerSubscriptions {
             address owner;
@@ -94,21 +94,21 @@ class Consumer extends Component {
         }
         `
 
-        window.BrowserSolc.loadVersion("soljson-v0.4.6+commit.2dabbdf0.js", async compiler => {
+        window.BrowserSolc.loadVersion("soljson-v0.4.17+commit.bdeb9e52.js", async compiler => {
           const optimize = 1;
           const result = compiler.compile(contract, optimize);
           console.log(result);
-          const bytecode = result.contracts.ConsumerSubscriptions.bytecode;
-          const abi = JSON.parse(result.contracts.ConsumerSubscriptions.interface);
+          const bytecode = result.contracts[':ConsumerSubscriptions'].bytecode;
+          const abi = JSON.parse(result.contracts[':ConsumerSubscriptions'].interface);
           const output = eth.contract(abi);
           console.log(JSON.stringify(abi))
           const account = await eth.accounts()
-
+          console.log(`initialDeposit`, initialDeposit);
           const data = {
             data: '0x' + bytecode,
             from: account[0],
             gas: 0,
-            amount: initialDeposit,
+            amount: '0x' + Number(initialDeposit).toString(16),
           };
 
           const gas = await eth.estimateGas(data)
