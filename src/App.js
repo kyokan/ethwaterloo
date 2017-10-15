@@ -18,10 +18,6 @@ import EthJs from 'ethjs';
 
 let eth;
 
-if (typeof window.web3 !== 'undefined') {
-  eth = new EthJs(window.web3.currentProvider);
-}
-
 class App extends Component {
   constructor(args) {
     super(args);
@@ -30,6 +26,19 @@ class App extends Component {
       authenticated: false,
       token: null
     };
+  }
+
+  checkWeb3() {
+    if (typeof window.web3 !== 'undefined') {
+      eth = new EthJs(window.web3.currentProvider);
+      this.setState({ token: null })
+    } else {
+      setTimeout(() => this.checkWeb3(), 200);
+    }
+  }
+
+  componentWillMount() {
+    this.checkWeb3();
   }
 
   render() {
