@@ -64,7 +64,7 @@ class App extends Component {
           />
           <Route
             path="/subscribers"
-            component={() => <Lists header="Subscribers" abi={MERCHANT_ABI} />}
+            component={() => <Lists header="Subscribers" abi={MERCHANT_ABI} showRequestButton />}
           />
           <Route
             path="/subscriptions"

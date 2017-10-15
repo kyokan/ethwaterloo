@@ -110,12 +110,14 @@ class Lists extends Component {
   }
 
   renderList() {
+    const { showRequestButton } = this.props;
     const { list } = this.state;
 
     return (
       <table className="mui-table mui-table--bordered">
         <thead>
           <tr>
+            { showRequestButton && <th>Actions</th> }
             <th>Addresses</th>
             <th>Data</th>
           </tr>
@@ -123,8 +125,29 @@ class Lists extends Component {
         <tbody>
         {
           list.map((item, i) => {
+            console.log({ showRequestButton })
             return (
               <tr key={i}>
+                { showRequestButton && (
+                  <td>
+                    <button
+                      onClick={async () => {
+                        const { address: tokenAddress } = this.state;
+                        const { abi } = this.props;
+                        const contract = eth.contract(abi).at(tokenAddress)
+                        const accounts = await eth.accounts();
+                        const account = accounts[0];
+
+                        contract.requestPayment(item, 1000000000000000, {
+                          from: account,
+                          amount: '0x0',
+                        });
+                      }}
+                    >
+                      Request
+                    </button>
+                  </td>
+                )}
                 <td>{ item }</td>
                 <td>{ JSON.stringify(this.state[item]) }</td>
               </tr>
