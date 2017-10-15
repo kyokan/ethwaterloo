@@ -4,6 +4,7 @@ import Authenticated from './Authenticated';
 import Unauthenticated from './Unauthenticated';
 import Merchant from './Merchant';
 import Consumer from './Consumer';
+import SubscribeNow from './SubscribeNow';
 import Button from 'muicss/lib/react/button';
 import {
   BrowserRouter as Router,
@@ -51,7 +52,7 @@ class App extends Component {
       <Router>
         <div className="app">
           <Route path="/login" component={Unauthenticated} />
-          <Route path="/subscribe" render={() => <div>Please subscribe</div>} />
+          <Route path="/subscribe" component={SubscribeNow} />
           <Route
             path="/merchant"
             component={Merchant}
