@@ -22,24 +22,66 @@ class Lists extends Component {
     };
   }
 
-  handleSubmit() {
-    const { address } = this.state;
+  async crawl(address = '0x0000000000000000000000000000000000000000', list = []) {
+    const { address: tokenAddress } = this.state;
     const { abi } = this.props;
+    const contract = eth.contract(abi).at(tokenAddress)
+    console.log({ contract })
+    const result = contract.subscriptionsLL
+      ? await contract.subscriptionsLL(address)
+      : await contract.subscribersLL(address);
+
+    if (result[0] === '0x0000000000000000000000000000000000000000') {
+      return list;
+    }
+
+    list.push(result[0]);
+    return this.crawl(result[0], list);
+  }
+
+  handleSubmit() {
+    const { abi } = this.props;
+    const { address: tokenAddress } = this.state;
 
     (async e => {
       try {
-        const tokenAddress = address;
-        const token = eth.contract(abi).at(tokenAddress)
-        console.log(token);
-        // const name = await token.name();
-        // const symbol = await token.symbol();
-        // const decimals = await token.decimals();
-        // const totalSupply = await token.totalSupply();
+        const contract = eth.contract(abi).at(tokenAddress)
+        const list = await this.crawl();
+        console.log({ list })
+
+
+        list.forEach(async pk => {
+
+          if (contract.getDetailsAt) {
+            const { amount, status, timestamp } = await contract.getDetailsAt(pk);
+            this.setState({
+              [pk]: {
+                amount: amount.toString(),
+                status: status.toString(),
+                timestamp: timestamp.toString(),
+              }
+            });
+          } else {
+            console.log('tests ')
+            const { amount, interval, lastPayment } = await contract.subscriptions(pk);
+            this.setState({
+              [pk]: {
+                amount: amount.toString(),
+                interval: interval.toString(),
+                lastPayment: lastPayment.toString(),
+              }
+            });
+          }
+
+        })
+
+
         this.setState({
-          list: ['a', 'b', 'c'],
+          list,
           submitted: true
         })
       } catch (e) {
+        console.log(e);
         console.error('Invalid Token Address');
         this.setState({ list: [] })
       }
@@ -75,6 +117,7 @@ class Lists extends Component {
         <thead>
           <tr>
             <th>Addresses</th>
+            <th>Data</th>
           </tr>
         </thead>
         <tbody>
@@ -83,6 +126,7 @@ class Lists extends Component {
             return (
               <tr key={i}>
                 <td>{ item }</td>
+                <td>{ JSON.stringify(this.state[item]) }</td>
               </tr>
             )
           })

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import EthJs from 'ethjs';
 
 const PK_MAP = {
-  '0X6DCFE11ED24897FBEB64423A39FD421E278DD55E': '0xbf09be7DD30A7bb833300B4A9fAC4E461Bf74Bb5'
+  '0X6DCFE11ED24897FBEB64423A39FD421E278DD55E': '0xbf09be7DD30A7bb833300B4A9fAC4E461Bf74Bb5',
+  '0X136A367ACC86CD02D50768B10527BD7117694C2E': '0xd0082cEd53C102D56454419603F5B974dDeF316E'
 };
 
 let eth;
@@ -64,7 +65,7 @@ class SubscribeNow extends Component {
             const contract = eth.contract(CONSUMER_ABI).at(contractKey);
             console.log({ contract, contractKey })
             contract.subscribe(
-              '0xe625fcf30fa1c2272c3ac3b5e0dad442c0af78fa',
+              '0xB358f5Ce294C58fA556C7570c0923eC17861D005',
               1000000000000000,
               2592000,
               {

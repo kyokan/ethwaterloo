@@ -5,7 +5,7 @@ import Button from 'muicss/lib/react/button';
 import EthJs from 'ethjs';
 import BigNumber from  'bignumber.js';
 
-export const MERCHANT_ABI = [{"constant":true,"inputs":[{"name":"consumerAddress","type":"address"}],"name":"getDetailsAt","outputs":[{"name":"timestamp","type":"uint256"},{"name":"amount","type":"uint256"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"consumerAddress","type":"address"},{"name":"paymentAmount","type":"uint256"}],"name":"requestPayment","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"paymentAmount","type":"uint256"},{"name":"paymentTimestamp","type":"uint256"}],"name":"onPayment","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"name","type":"string"}],"name":"update","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"subscriptionName","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"payable":true,"type":"fallback"}];
+export const MERCHANT_ABI = [{"constant":true,"inputs":[{"name":"consumerAddress","type":"address"}],"name":"getDetailsAt","outputs":[{"name":"timestamp","type":"uint256"},{"name":"amount","type":"uint256"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"subscribersLL","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"consumerAddress","type":"address"},{"name":"paymentAmount","type":"uint256"},{"name":"interval","type":"uint256"}],"name":"requestSubscription","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"consumerAddress","type":"address"},{"name":"paymentAmount","type":"uint256"}],"name":"requestPayment","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"paymentAmount","type":"uint256"},{"name":"paymentTimestamp","type":"uint256"}],"name":"onPayment","outputs":[{"name":"success","type":"bool"}],"payable":true,"type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"},{"name":"interval","type":"uint256"},{"name":"name","type":"string"}],"name":"update","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"subscriptionName","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"payable":true,"type":"fallback"}];
 
 class Merchant extends Component {
   constructor(args) {
@@ -31,8 +31,8 @@ class Merchant extends Component {
     // console.log({ subscriptionAmountBN })
     (async () => {
       console.log('ASYNCED');
-      const WEI_CONSTANT = new BigNumber('1000000000000000000')
-      const subscriptionAmountBN = new BigNumber(amount).times(WEI_CONSTANT).toString()
+      const WEI_CONSTANT = new BigNumber('1000000000000000000');
+      const subscriptionAmountBN = new BigNumber(amount).times(WEI_CONSTANT).toString();
       const contract = `
         pragma solidity ^0.4.0;
         contract MerchantContract {
@@ -41,7 +41,7 @@ class Merchant extends Component {
           uint subscriptionAmount = ${subscriptionAmountBN};
           uint subscriptionInterval = ${interval};
           mapping (address => Subscriber) subscribers;
-          mapping (address => address) subscribersLL;
+          mapping (address => address) public subscribersLL;
           enum Statuses { SUBSCRIBED, UNSUBSCRIBED }
 
           struct Payment {
