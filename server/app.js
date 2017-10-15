@@ -77,7 +77,7 @@ const createPaywall = options => async (req, res, next) => {
     const contract = eth.contract(abi).at(subscriptionKey)
 
     console.log({ contract, user })
-    const { status } = await contract.getDetailsAt(PK_MAP[user.toUpperCase()])
+    const { status } = await contract.getDetailsAt(PK_MAP[user.toUpperCase()] || '0x0000000000000000000000000000000000000000')
     // Query for subscription status here
     const isSubscriptionActive = status.toString() == 0;
 
